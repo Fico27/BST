@@ -89,6 +89,93 @@ class Tree {
     }
   }
 
+  levelOrder(callback, node = this.root) {
+    if (typeof callback !== "function") {
+      throw Error("Callback is not a function");
+    }
+
+    let queue = [];
+    // added result to show values of nodes returns in level order traversal
+    let result = [];
+    if (node === null) {
+      return null;
+    }
+    queue.push(node);
+
+    while (queue.length > 0) {
+      let currentNode = queue.shift();
+      callback(currentNode);
+      result.push(currentNode.data);
+      if (currentNode.left !== null) queue.push(currentNode.left);
+      if (currentNode.right !== null) queue.push(currentNode.right);
+    }
+    return result;
+  }
+
+  // In order: left -> root -> right
+  inOrder(callback, node = this.root) {
+    if (typeof callback !== "function") {
+      throw Error("Callback is not a function");
+    }
+
+    if (node === null) {
+      return null;
+    }
+
+    if (node.left !== null) {
+      this.inOrder(callback, node.left);
+    }
+    callback(node);
+    if (node.right !== null) {
+      this.inOrder(callback, node.right);
+    }
+  }
+
+  //PreOrder: root -> left -> right
+  preOrder(callback, node = this.root) {
+    if (typeof callback !== "function") {
+      throw Error("Callback is not a function");
+    }
+
+    if (node === null) {
+      return null;
+    }
+
+    callback(node);
+    if (node.left !== null) {
+      this.preOrder(callback, node.left);
+    }
+    if (node.right !== null) {
+      this.preOrder(callback, node.right);
+    }
+  }
+  //postOrder: left -> right -> root
+  postOrder(callback, node = this.root) {
+    if (typeof callback !== "function") {
+      throw Error("Callback is not a function");
+    }
+
+    if (node === null) {
+      return null;
+    }
+
+    if (node.left !== null) {
+      this.postOrder(callback, node.left);
+    }
+    if (node.right !== null) {
+      this.postOrder(callback, node.right);
+    }
+    callback(node);
+  }
+
+  height(value, node = this.root) {
+    let node = this.find(value, node);
+
+    if (node === null) {
+      return null;
+    }
+  }
+
   prettyPrint = (node, prefix = "", isLeft = true) => {
     if (node === null) {
       return;
