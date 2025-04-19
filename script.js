@@ -168,12 +168,45 @@ class Tree {
     callback(node);
   }
 
-  height(value, node = this.root) {
-    let node = this.find(value, node);
+  height(value) {
+    let node = this.find(value, this.root);
 
     if (node === null) {
       return null;
     }
+
+    return this.heightHelper(node);
+  }
+
+  heightHelper(node) {
+    if (node === null) {
+      return -1;
+    }
+
+    const countLeft = this.heightHelper(node.left);
+    const countRight = this.heightHelper(node.right);
+    return 1 + Math.max(countLeft, countRight);
+  }
+
+  depth(value) {
+    return this.depthHelper(value, this.root, 0);
+  }
+
+  depthHelper(value, node, currentDepth) {
+    if (node === null) {
+      return null;
+    }
+
+    if (node.data === value) {
+      return currentDepth;
+    }
+
+    if (value < node.data) {
+      return this.depthHelper(value, node.left, currentDepth + 1);
+    } else if (value > node.data) {
+      return this.depthHelper(value, node.right, currentDepth + 1);
+    }
+    return null;
   }
 
   prettyPrint = (node, prefix = "", isLeft = true) => {
@@ -181,11 +214,15 @@ class Tree {
       return;
     }
     if (node.right !== null) {
-      prettyPrint(node.right, `${prefix}${isLeft ? "│   " : "    "}`, false);
+      this.prettyPrint(
+        node.right,
+        `${prefix}${isLeft ? "│   " : "    "}`,
+        false
+      );
     }
     console.log(`${prefix}${isLeft ? "└── " : "┌── "}${node.data}`);
     if (node.left !== null) {
-      prettyPrint(node.left, `${prefix}${isLeft ? "    " : "│   "}`, true);
+      this.prettyPrint(node.left, `${prefix}${isLeft ? "    " : "│   "}`, true);
     }
   };
 }
