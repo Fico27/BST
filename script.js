@@ -26,15 +26,19 @@ class Tree {
     return root;
   }
 
-  insert(root, newValue) {
+  insert(newValue) {
+    this.root = this.insertValue(this.root, newValue);
+  }
+
+  insertValue(root = this.root, newValue) {
     if (root === null) {
       return new Node(newValue);
     }
 
     if (newValue < root.data) {
-      root.left = this.insert(root.left, newValue);
+      root.left = this.insertValue(root.left, newValue);
     } else if (newValue > root.data) {
-      root.right = this.insert(root.right, newValue);
+      root.right = this.insertValue(root.right, newValue);
     }
     return root;
   }
@@ -209,7 +213,32 @@ class Tree {
     return null;
   }
 
-  prettyPrint = (node, prefix = "", isLeft = true) => {
+  isBalanced(node = this.root) {
+    if (node === null) {
+      return true;
+    }
+
+    let leftSubTree = this.heightHelper(node.left);
+    let rightSubTree = this.heightHelper(node.right);
+
+    if (Math.abs(leftSubTree - rightSubTree) > 1) {
+      return false;
+    }
+
+    let leftBalanced = this.isBalanced(node.left);
+    let rightBalanced = this.isBalanced(node.right);
+
+    return leftBalanced && rightBalanced;
+  }
+
+  reBalance() {
+    const balancedArray = [];
+    this.inOrder((node) => balancedArray.push(node.data));
+
+    this.root = this.buildTree(balancedArray, 0, balancedArray.length - 1);
+  }
+
+  prettyPrint = (node = this.root, prefix = "", isLeft = true) => {
     if (node === null) {
       return;
     }
@@ -226,3 +255,46 @@ class Tree {
     }
   };
 }
+
+function generateArray() {
+  let array = [];
+  for (let i = 0; i < 100; i++) {
+    array.push(Math.floor(Math.random() * 100));
+  }
+  return array;
+}
+
+let array = generateArray();
+
+let tree = new Tree(array);
+
+let levelOrderArray = [];
+let inOrderArray = [];
+let preOrderArray = [];
+let postOrderArray = [];
+
+tree.levelOrder((node) => levelOrderArray.push(node.data));
+tree.inOrder((node) => inOrderArray.push(node.data));
+tree.postOrder((node) => postOrderArray.push(node.data));
+tree.preOrder((node) => preOrderArray.push(node.data));
+
+console.log(`LevelOrder: ${levelOrderArray}`);
+console.log(`LevelOrder: ${inOrderArray}`);
+console.log(`LevelOrder: ${preOrderArray}`);
+console.log(`LevelOrder: ${postOrderArray}`);
+
+tree.insert(1010);
+
+tree.insert(10101);
+
+tree.reBalance();
+
+tree.levelOrder((node) => levelOrderArray.push(node.data));
+tree.inOrder((node) => inOrderArray.push(node.data));
+tree.postOrder((node) => postOrderArray.push(node.data));
+tree.preOrder((node) => preOrderArray.push(node.data));
+
+console.log(`LevelOrder after rebalance: ${levelOrderArray}`);
+console.log(`InOrder after rebalance: ${inOrderArray}`);
+console.log(`PreOrder after rebalance: ${preOrderArray}`);
+console.log(`PostOrder after rebalance: ${postOrderArray}`);
